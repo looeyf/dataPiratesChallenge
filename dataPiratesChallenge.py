@@ -1,3 +1,4 @@
+# importação de bibliotecas utilizadas
 import requests
 import json
 import re
@@ -5,8 +6,9 @@ from bs4 import BeautifulSoup
 
 qtdRow = 110 # nr maximo de rows por requisicao
 ufList = ['RS','SC'] # UFs que serao buscadas
-data = {} # resultado final
+data = {} # inicializacao da variavel que guardará o resultado final
 
+# funcao que faz um POST na URL dos correios e retorna o HTML como resultado
 def reqFaixaCep(uf, pagini, pagfim):
   payload = {'UF': uf, 'qtdrow': qtdRow, 'pagini': pagini, 'pagfim': pagfim}
   try:
@@ -17,6 +19,7 @@ def reqFaixaCep(uf, pagini, pagfim):
 
   return r
 
+# funcao que retorna o numero maximo de registros do UF em questao
 def findMaxRow(uf, startRow, endRow):
   page = reqFaixaCep(uf, startRow, endRow)
   soup = BeautifulSoup(page.text, 'html.parser')
@@ -27,6 +30,8 @@ def findMaxRow(uf, startRow, endRow):
   else:
     return 0
 
+# funcao que busca no HTML todas as informacoes referentes ao CEP disponibilizadas na pagina
+# e adiciona em uma lista dicionarios com pares de chave valor
 def getCepList(page):
   global id
   soup = BeautifulSoup(page.text, 'html.parser')
@@ -59,6 +64,7 @@ def getCepList(page):
     else:
       pass
 
+# loop que passa por todos os index (UFs) na variavel ufList
 for uf in ufList:
   id = 0
   startRow = 1
@@ -67,21 +73,23 @@ for uf in ufList:
   cepList = []
   page = reqFaixaCep(uf, startRow, endRow)
 
-  # logica para inserir os valores em uma list abaixo e pegar o maxrow do html
   getCepList(page)
 
+  # loop para buscar todas as paginas
   while endRow <= maxRow:
     startRow = endRow + 1
     endRow += qtdRow
     page = reqFaixaCep(uf, startRow, endRow)
 
-    # logica para inserir os valores em uma list abaixo
     getCepList(page)
 
+  # adiciona a lista completa das faixas de cep no dicionario data de acordo com a UF selecionada
   data.update({uf: cepList})
 
+# exporta as faixas de cep encontradas em cada UF para um arquivo .json
 with open('faixas_de_cep.json', 'w') as fp:
   json.dump(data, fp)
+  
 # print(data)
 
 
