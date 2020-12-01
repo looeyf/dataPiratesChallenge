@@ -64,3 +64,5 @@ The following tools were used in the construction of the project:
 - **[python](https://www.python.org)**
 - **[requests](https://pypi.org/project/requests/)**
 - **[beautifulsoup4](https://pypi.org/project/beautifulsoup4/)**
+- **[re](https://docs.python.org/3/library/re.html)**
+- **[json](https://docs.python.org/3/library/json.html)**
