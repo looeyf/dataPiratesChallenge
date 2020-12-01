@@ -12,7 +12,7 @@ data = {} # inicializacao da variavel que guardará o resultado final
 def reqFaixaCep(uf, pagini, pagfim):
   payload = {'UF': uf, 'qtdrow': qtdRow, 'pagini': pagini, 'pagfim': pagfim}
   try:
-    r = requests.post('http://www.buscacep.correios.com.br/sistemas/buscacep/resultadoBuscaFaixaCEP.cfm', data=payload, allow_redirects=False)
+    r = requests.post('http://www.buscacep.correios.com.br/sistemas/buscacep/resultadoBuscaFaixaCEP.cfm', data=payload)
   except requests.exceptions.RequestException as e:
     print('An error has occurred. Please try again later.')
     raise SystemExit(e)
