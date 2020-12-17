@@ -87,8 +87,8 @@ for uf in ufList:
   data.update({uf: cepList})
 
 # exporta as faixas de cep encontradas em cada UF para um arquivo .json
-with open('faixas_de_cep.json', 'w') as fp:
-  json.dump(data, fp)
+with open('faixas_de_cep.json', 'w', encoding='utf8') as fp:
+  json.dump(data, fp, ensure_ascii=False)
   
 # print(data)
 
