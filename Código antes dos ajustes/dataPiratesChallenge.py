@@ -2,15 +2,11 @@
 import requests
 import json
 import re
-from pathlib import Path
 from bs4 import BeautifulSoup
 
 qtdRow = 110 # nr maximo de rows por requisicao
 ufList = ['RS','SC'] # UFs que serao buscadas
-data = [] # inicializacao da variavel que guardará o resultado final
-
-base = Path('results') # Path que guardará os resultados em jsonl
-base.mkdir(exist_ok=True) # Cria a pasta caso a mesma não exista
+data = {} # inicializacao da variavel que guardará o resultado final
 
 # funcao que faz um POST na URL dos correios e retorna o HTML como resultado
 def reqFaixaCep(uf, pagini, pagfim):
@@ -63,7 +59,7 @@ def getCepList(page):
       aux += 1
     
     if (len(info) > 3):
-      data.append(info)
+      cepList.append(info)
       id += 1
     else:
       pass
@@ -74,7 +70,7 @@ for uf in ufList:
   startRow = 1
   endRow = 110
   maxRow = int(findMaxRow(uf, startRow, endRow))
-  data = []
+  cepList = []
   page = reqFaixaCep(uf, startRow, endRow)
 
   getCepList(page)
@@ -87,13 +83,13 @@ for uf in ufList:
 
     getCepList(page)
 
-  # criando o nome do arquivo json
-  jsonpath = base / ('faixas_de_cep_' + uf + '.jsonl')
+  # adiciona a lista completa das faixas de cep no dicionario data de acordo com a UF selecionada
+  data.update({uf: cepList})
 
-  # exporta as faixas de cep encontradas em cada UF para um arquivo .json
-  with open(jsonpath, 'w', encoding='utf8') as fp:
-    for item in data:
-      fp.write(json.dumps(item, ensure_ascii=False) + '\n')
-    
+# exporta as faixas de cep encontradas em cada UF para um arquivo .json
+with open('faixas_de_cep.json', 'w') as fp:
+  json.dump(data, fp)
+  
+# print(data)
 
 
